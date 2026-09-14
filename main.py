@@ -1,12 +1,73 @@
-from src.browser import create_browser
-from playwright.sync_api import sync_playwright
-from src.actions.admin_portal.induvidual_schedule_setup import student_alarm_schedule, lesson_schedule
-from src.actions.admin_portal import home
-from src.models.individual_home_based_instruction import IndividualHomeBasedSubjectSchedule, get_schedule
+import pathlib
 
-from src.alarms_schedule import LessonAlarmSchedule, high_school_alarms
+from src.admin_portal.actions import admin_home, global_students_list, global_teachers_list
+from src.admin_portal.actions.individual_student_schedule_setup import lesson_schedule
+from src.admin_portal.domain import platform_student, platform_teacher
+from src.admin_portal.domain.individual_student_schedule import get_schedule
+from src.browser import create_browser
+from playwright.sync_api import Page, sync_playwright
+
+
+from src.alarms_schedule import AlarmSchedule, high_school_alarms
 
 SCHOOL_PORTAL_URL = "https://eschool-ua.com/portal"
+
+
+def setup_students_individual_schedule(admin_page: Page) -> None:
+    students = [
+        # (
+        #     "Криловський Євген Євгенович",
+        #     "./data/admin_portal/individual_student_schedule/krylovskyi.csv",
+        # ),
+        ("Білоус Тимур Вікторович", "./data/admin_portal/individual_student_schedule/bilous.csv"),
+        # ("Кононенко Андрій Максимович", "./data/admin_portal/individual_student_schedule/kononenko.csv"),
+        # ("Береговий Андрій Ярославович", "./data/admin_portal/individual_student_schedule/berehovyi.csv"),
+    ]
+
+    for student_name, schedule_file in students:
+        # home.go_home_page(admin_page)
+        # student_alarm_schedule.set_alarm_schedule(
+        #     student_name=student_name,
+        #     alarm_schedule=high_school_alarms,
+        #     admin_page=admin_page,
+        # )
+
+        lesson_schedules = get_schedule(schedule_file)
+
+        # home.go_home_page(admin_page)
+        # lesson_schedule.set_up_individual_plan_subjects(
+        #     student_name=student_name,
+        #     lesson_schedules=lesson_schedules,
+        #     admin_page=admin_page,
+        # )
+
+        admin_home.go_home_page(admin_page)
+        lesson_schedule.set_up_lessons_schedule(
+            student_name=student_name,
+            lesson_schedules=lesson_schedules,
+            alarm_schedule=high_school_alarms,
+            admin_page=admin_page,
+        )
+
+
+def download_students_list(admin_page: Page) -> None:
+    students = global_students_list.get_all_students(admin_page)
+
+    save_path = pathlib.Path("./output/platform_students.csv").resolve()
+
+    platform_student.write_to_csv(students, save_path)
+
+    print(f"Saved students to {save_path.as_posix()}")
+
+
+def download_teachers_list(admin_page: Page) -> None:
+    teachers = global_teachers_list.get_all_teachers(admin_page)
+
+    save_path = pathlib.Path("./output/platform_teachers.csv").resolve()
+
+    platform_teacher.write_to_csv(teachers, save_path)
+
+    print(f"Saved students to {save_path.as_posix()}")
 
 
 def main():
@@ -22,40 +83,19 @@ def main():
             admin_page = admin_page_info.value
             admin_page.wait_for_load_state("networkidle")
 
-        students = [
-            # (
-            #     "Криловський Євген Євгенович",
-            #     "./data/admin_portal/individual_plan_schedule/krylovskyi.csv",
-            # ),
-            ("Білоус Тимур Вікторович", "./data/admin_portal/individual_plan_schedule/bilous.csv"),
-            ("Кононенко Андрій Максимович", "./data/admin_portal/individual_plan_schedule/kononenko.csv"),
-            ("Береговий Андрій Ярославович", "./data/admin_portal/individual_plan_schedule/berehovyi.csv"),
-        ]
+        # ---
+        # Here uncomment required actions.
+        # Later I will add actions setup and choosing from config or smth
+        # ---
 
-        for student_name, schedule_file in students:
-            home.go_home_page(admin_page)
-            student_alarm_schedule.set_alarm_schedule(
-                student_name=student_name,
-                alarm_schedule=high_school_alarms,
-                admin_page=admin_page,
-            )
+        # 1) setup individual schedule for students
+        # setup_students_individual_schedule(admin_page)
 
-            lesson_schedules = get_schedule(schedule_file)
+        # 2) Download students list from admin
+        # download_students_list(admin_page)
 
-            home.go_home_page(admin_page)
-            lesson_schedule.set_up_individual_plan_subjects(
-                student_name=student_name,
-                lesson_schedules=lesson_schedules,
-                admin_page=admin_page,
-            )
-
-            home.go_home_page(admin_page)
-            lesson_schedule.set_up_lessons_schedule(
-                student_name=student_name,
-                lesson_schedules=lesson_schedules,
-                alarm_schedule=high_school_alarms,
-                admin_page=admin_page,
-            )
+        # 3) Download teachers list from admin
+        download_teachers_list(admin_page)
 
         context.close()
 

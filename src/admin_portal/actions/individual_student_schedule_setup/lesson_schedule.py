@@ -3,8 +3,9 @@ import re
 from playwright.sync_api import Page
 from pydantic import BaseModel
 
-from src.alarms_schedule import LessonAlarmSchedule
-from src.models.individual_home_based_instruction import IndividualHomeBasedSubjectSchedule
+
+from src.admin_portal.domain.individual_student_schedule import IndividualHomeBasedSubjectSchedule
+from src.alarms_schedule import AlarmSchedule
 
 
 class SubjectSetup(BaseModel):
@@ -23,16 +24,14 @@ def get_subject_setup(lesson_schedules: list[IndividualHomeBasedSubjectSchedule]
 
         if key in res:
             continue
-        
+
         teacher_name_parts = lesson_schedule.teacher.split()
         if len(teacher_name_parts) <= 1:
             teacher_name_parts = lesson_schedule.teacher.split(".")
 
         res[key] = SubjectSetup(
             subject=lesson_schedule.subject,
-            teacher_surname=(
-                [n for n in teacher_name_parts if len(n) > 2][0] if lesson_schedule.teacher else ""
-            ),
+            teacher_surname=([n for n in teacher_name_parts if len(n) > 2][0] if lesson_schedule.teacher else ""),
             room=lesson_schedule.room or "0",
             hours_per_week=str(lesson_schedule.hours_per_week),
             start_date=lesson_schedule.start_date or "01.09.2026",
@@ -42,10 +41,10 @@ def get_subject_setup(lesson_schedules: list[IndividualHomeBasedSubjectSchedule]
 
 
 def go_to_individual_plan_page(student_name: str, admin_page: Page) -> None:
-    admin_page.get_by_role("link", name=" Алфавітна книга учнів").click()
+    admin_page.get_by_role("link", name="Алфавітна книга учнів").click()
     admin_page.get_by_role("link", name=student_name).first.click()
     admin_page.get_by_role("link", name=" Індивідуальне навчання").click()
-    admin_page.get_by_role("link", name=" Індивідуальний навчальний план").click()
+    admin_page.get_by_role("link", name="Індивідуальний навчальний план").click()
 
 
 def setup_subject_params(subject_setup: SubjectSetup, admin_page: Page) -> None:
@@ -93,7 +92,7 @@ def set_up_individual_plan_subjects(
 
 
 def go_to_calendar_page(student_name: str, admin_page: Page) -> None:
-    admin_page.get_by_role("link", name=" Алфавітна книга учнів").click()
+    admin_page.get_by_role("link", name="Алфавітна книга учнів").click()
     admin_page.get_by_role("link", name=student_name).first.click()
     admin_page.get_by_role("link", name=" Індивідуальне навчання").click()
     admin_page.get_by_role("link", name=" Календар").click()
@@ -103,7 +102,7 @@ def go_to_calendar_page(student_name: str, admin_page: Page) -> None:
 def set_up_lessons_schedule(
     student_name: str,
     lesson_schedules: list[IndividualHomeBasedSubjectSchedule],
-    alarm_schedule: list[LessonAlarmSchedule],
+    alarm_schedule: list[AlarmSchedule],
     admin_page: Page,
 ):
     go_to_calendar_page(student_name, admin_page)
@@ -143,7 +142,7 @@ def set_up_calendar_lesson(alarm_schedule, admin_page, lesson_schedule):
     # set lesson number
     lesson_alarm = next(
         (alarm for alarm in alarm_schedule if alarm.lesson_number == lesson_schedule.lesson_number),
-        LessonAlarmSchedule(lesson_number=lesson_schedule.lesson_number, time_from="08:30", time_to="09:15"),
+        AlarmSchedule(lesson_number=lesson_schedule.lesson_number, time_from="08:30", time_to="09:15"),
     )
     admin_page.locator(".row > div:nth-child(2)").first.click()
     admin_page.get_by_role("treeitem", name=f"({lesson_alarm.time_from})").click()

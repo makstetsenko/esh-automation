@@ -2,18 +2,18 @@ import re
 
 from playwright.sync_api import Page
 
-from src.alarms_schedule import LessonAlarmSchedule
+from src.alarms_schedule import AlarmSchedule
 
 
 def go_to_student_calendar_page(student_name: str, admin_page: Page) -> None:
-    admin_page.get_by_role("link", name=" Алфавітна книга учнів").click()
+    admin_page.get_by_role("link", name="Алфавітна книга учнів").click()
     admin_page.get_by_role("link", name=student_name).first.click()
     admin_page.get_by_role("link", name=" Індивідуальне навчання").click()
     admin_page.get_by_role("link", name=" Календар").click()
     admin_page.get_by_role("link", name=" Розклад дзвінків").click()
 
 
-def add_lesson_alarm_schedule(schedule: LessonAlarmSchedule, admin_page: Page) -> None:
+def add_lesson_alarm_schedule(schedule: AlarmSchedule, admin_page: Page) -> None:
     admin_page.get_by_role("link", name=" Додати урок").click()
 
     admin_page.get_by_role("spinbutton", name="номер уроку").click()
@@ -28,7 +28,7 @@ def add_lesson_alarm_schedule(schedule: LessonAlarmSchedule, admin_page: Page) -
     admin_page.get_by_role("button", name="Надіслати ").click()
 
 
-def is_alarm_exists(schedule: LessonAlarmSchedule, admin_page: Page) -> bool:
+def is_alarm_exists(schedule: AlarmSchedule, admin_page: Page) -> bool:
     lesson_number = str(schedule.lesson_number)
 
     lesson_cell = admin_page.locator("table tbody tr td:first-child").filter(
@@ -38,7 +38,7 @@ def is_alarm_exists(schedule: LessonAlarmSchedule, admin_page: Page) -> bool:
     return lesson_cell.count() > 0
 
 
-def set_alarm_schedule(student_name: str, alarm_schedule: list[LessonAlarmSchedule], admin_page: Page) -> None:
+def set_alarm_schedule(student_name: str, alarm_schedule: list[AlarmSchedule], admin_page: Page) -> None:
     """
     Set the alarm schedule for the specific student.
     """
