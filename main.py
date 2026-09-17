@@ -15,13 +15,15 @@ from src.admin_portal.domain import student_distribution
 from src.admin_portal.domain.individual_student_schedule import get_schedule
 from src.admin_portal.domain.student_distribution import StudentDistribution
 from src.browser import create_browser
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import Page, expect, sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 
 from src.alarms_schedule import AlarmSchedule, high_school_alarms
 
 
 import logging
+
+from src.journal_portal.actions import set_student_marks_to_nearest_last_lesson
 
 SCHOOL_PORTAL_URL = "https://eschool-ua.com/portal"
 
@@ -111,6 +113,67 @@ def distribute_students_in_subjects_in_class(
     )
 
 
+def run_admin_action(page: Page):
+    with page.expect_popup() as admin_page_info:
+        page.get_by_role("link", name="Адміністрування Адміністрування").click()
+    admin_page = admin_page_info.value
+    admin_page.wait_for_load_state("networkidle")
+
+    # 1) setup individual schedule for students
+    # setup_students_individual_schedule(admin_page)
+
+    # 2) Download students list from admin
+    # download_students_list(admin_page)
+
+    # 3) Download teachers list from admin
+    # download_teachers_list(admin_page)
+
+    # 4) Download subjects list from admin
+    # download_subjects_list(admin_page)
+
+    # 5) distribute students between groups in selected subject and class
+    distribute_students_in_subjects_in_class(
+        subjects=["Українська мова"],
+        class_name="5-А",
+        student_distribution_csv_path=pathlib.Path(
+            "data/admin_portal/students-distribution-in-class/5-А-students-distribution.csv"
+        ),
+        page=admin_page,
+        studying_start_date=datetime.date(2026, 9, 1),
+        remove_selection_if_distribution_missing=True,  # If False => basically do nothing if student was not specified in csv file. If True => group selection will be removed
+    )
+
+
+def close_welcome_modal_if_appeared(page: Page):
+    whats_new_modal = (
+        page.get_by_role("heading", name="Вітаємо в оновленому E-журналі").locator("..").locator("..").locator("..")
+    )
+
+    try:
+        # check here if page is visible
+        expect(whats_new_modal).to_be_visible(timeout=1_000)
+    except PlaywrightTimeoutError:
+        # if exception -> not visible -> just continue external flow
+        return
+
+    # click on "Continue" -> close modal -> continue external flow
+    whats_new_modal.get_by_role("button", name="Почати роботу").click()
+
+
+def run_journal_action(page: Page):
+    with page.expect_popup() as journal_page_info:
+        page.get_by_role("link", name="Е-журнал Е-журнал").click()
+
+    journal_page = journal_page_info.value
+    journal_page.wait_for_load_state("networkidle")
+
+    # close_welcome_modal_if_appeared(journal_page)
+
+    set_student_marks_to_nearest_last_lesson.set_random_mark_to_nearest_lessons_to_all_students(
+        mark_min=8, mark_max=10, class_name="8-Б", page=journal_page
+    )
+
+
 def main():
     with sync_playwright() as p:
         context = create_browser(p)
@@ -119,39 +182,13 @@ def main():
 
         page.goto(SCHOOL_PORTAL_URL)
 
-        with page.expect_popup() as admin_page_info:
-            page.get_by_role("link", name="Адміністрування Адміністрування").click()
-            admin_page = admin_page_info.value
-            admin_page.wait_for_load_state("networkidle")
-
         # ---
         # Here uncomment required actions.
         # Later I will add actions setup and choosing from config or smth
         # ---
 
-        # 1) setup individual schedule for students
-        # setup_students_individual_schedule(admin_page)
-
-        # 2) Download students list from admin
-        # download_students_list(admin_page)
-
-        # 3) Download teachers list from admin
-        # download_teachers_list(admin_page)
-
-        # 4) Download subjects list from admin
-        # download_subjects_list(admin_page)
-
-        # 5) distribute students between groups in selected subject and class
-        distribute_students_in_subjects_in_class(
-            subjects=["Українська мова"],
-            class_name="5-А",
-            student_distribution_csv_path=pathlib.Path(
-                "data/admin_portal/students-distribution-in-class/5-А-students-distribution.csv"
-            ),
-            page=admin_page,
-            studying_start_date=datetime.date(2026, 9, 1),
-            remove_selection_if_distribution_missing=True,  # If False => basically do nothing if student was not specified in csv file. If True => group selection will be removed
-        )
+        # run_admin_action(page)
+        run_journal_action(page)
 
         context.close()
 

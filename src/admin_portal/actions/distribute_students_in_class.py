@@ -17,7 +17,7 @@ def go_to_class_subject_groups_page(page: Page) -> None:
     subject_groups_link = page.get_by_role("link", name="Навчальні групи")
     subject_groups_link.wait_for(state="visible", timeout=60_000)
     subject_groups_link.click()
-    
+
     page.wait_for_load_state("networkidle")
 
 
