@@ -7,6 +7,9 @@ from src.admin_portal.domain.student_distribution import StudentDistribution
 
 logger = logging.getLogger(__name__)
 
+class RemoveStudentMovementException(Exception):
+    pass
+
 
 def go_to_class_page(class_name: str, page: Page) -> None:
     page.get_by_role("link", name=class_name).click()
@@ -26,7 +29,7 @@ def go_to_subject_group_students_distribution_page(subject_name: str, page: Page
     page.wait_for_load_state("networkidle")
 
 
-def remove_previous_movements_info(student_row: Locator, page: Page) -> None:
+def try_remove_previous_movements_info(student_row: Locator, page: Page) -> None:
     edit_movements_button = student_row.locator(".edit-movements")
     edit_movements_button.click()
     page.wait_for_load_state("networkidle")
@@ -52,10 +55,19 @@ def remove_previous_movements_info(student_row: Locator, page: Page) -> None:
             b.click()
 
         dialog = dialog_info.value
+        
+        if "Учень має виставлені:" in dialog.message:
+            dialog.accept()
+            page.wait_for_load_state("networkidle")
+            close_movements_modal_button.click()
+            raise RemoveStudentMovementException(dialog.message)
+        
         dialog.accept()
 
     save_movement_changes_button = modal_with_movements.locator("..").get_by_role("button", name="Зберегти змiни")
-    save_movement_changes_button.click()
+
+    if save_movement_changes_button.count() > 0:
+        save_movement_changes_button.click()
 
     close_movements_modal_button.click()
     page.wait_for_load_state("networkidle")
@@ -92,6 +104,14 @@ def process_student_row(
     if selected_distribution == None:
         logger.warning(f"Distribution for student {student_name} was not found.")
 
+    if selected_distribution is not None or remove_selection_if_distribution_missing:
+        try:
+            try_remove_previous_movements_info(student_row, page)
+        except RemoveStudentMovementException as ex:
+            logger.error(f"Error during removing student movement: {ex}")
+            logger.error(f"Skipping group assignment for student {student_name}")
+            return
+    
     if selected_distribution is not None:
         logger.info(f"Assigning student {student_name} to  group {selected_distribution.group_name}")
 
@@ -101,14 +121,11 @@ def process_student_row(
 
         checkbox_cells = student_row.get_by_role("cell", name="", exact=True)
         checkbox_cells.nth(group_index).click()
-        remove_previous_movements_info(student_row, page)
         return
 
     if remove_selection_if_distribution_missing:
         logger.info(f"Clearing group selection for student {student_name}")
-
         remove_selection_button.click()
-        remove_previous_movements_info(student_row, page)
         return
 
 

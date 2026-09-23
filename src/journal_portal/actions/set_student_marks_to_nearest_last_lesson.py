@@ -19,7 +19,7 @@ class StudentMark(BaseModel):
 
 def go_to_journal(page: Page):
     page.wait_for_load_state("networkidle")
-    link = page.get_by_test_id("appshell-nav").get_by_role("link", name="Журнал оцінок")
+    link = page.locator("a", has_text="Журнал оцінок").first
 
     expect(link).to_be_visible(timeout=60_000)
     link.click()
@@ -28,12 +28,19 @@ def go_to_journal(page: Page):
 
 
 def go_to_class(class_name: str, page: Page):
-    page.get_by_role("combobox", name="Перемкнути клас").click()
-
+    combobox = page.get_by_role("combobox", name="Перемкнути клас")
+    combobox.click()
+    
     option = page.get_by_role("option", name=class_name)
-    expect(option).to_be_visible(timeout=5_000)
-    option.click()
-
+    option.hover()
+    option.press("Enter")
+    
+    expect(combobox).to_contain_text(
+        class_name,
+        timeout=15_000,
+    )
+    
+    page.wait_for_timeout(timeout=1000)
     page.wait_for_load_state("networkidle")
 
 
