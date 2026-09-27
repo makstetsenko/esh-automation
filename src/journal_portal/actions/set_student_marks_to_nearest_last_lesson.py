@@ -30,16 +30,16 @@ def go_to_journal(page: Page):
 def go_to_class(class_name: str, page: Page):
     combobox = page.get_by_role("combobox", name="Перемкнути клас")
     combobox.click()
-    
+
     option = page.get_by_role("option", name=class_name)
     option.hover()
     option.press("Enter")
-    
+
     expect(combobox).to_contain_text(
         class_name,
         timeout=15_000,
     )
-    
+
     page.wait_for_timeout(timeout=1000)
     page.wait_for_load_state("networkidle")
 

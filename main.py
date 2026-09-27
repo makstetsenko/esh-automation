@@ -3,13 +3,14 @@ import pathlib
 
 from app_logging import setup_logging
 from src.admin_portal.actions import (
-    admin_home,
     distribute_students_in_class,
     global_students_list,
     global_teachers_list,
     global_subjects_list,
+    teacher_subjects_classes_report,
 )
 from src.admin_portal.actions.individual_student_schedule_setup import lesson_schedule
+from src.admin_portal.actions.shared import breadcrumbs, home_page
 from src.admin_portal.domain import platform_student, platform_teacher, platform_subject
 from src.admin_portal.domain import student_distribution
 from src.admin_portal.domain.individual_student_schedule import get_schedule
@@ -60,7 +61,7 @@ def setup_students_individual_schedule(admin_page: Page) -> None:
         #     admin_page=admin_page,
         # )
 
-        admin_home.go_home_page(admin_page)
+        breadcrumbs.go_home_page(admin_page)
         lesson_schedule.set_up_lessons_schedule(
             student_name=student_name,
             lesson_schedules=lesson_schedules,
@@ -113,6 +114,19 @@ def distribute_students_in_subjects_in_class(
     )
 
 
+def download_teaching_subjects_report(page: Page):
+    staff_names = [
+    ]
+
+    for s in staff_names:
+        download_path = pathlib.Path(f"./output/{s}-teaching-subjects-report.csv")
+        result = teacher_subjects_classes_report.get_teaching_report(s, page)
+        
+        if not result is None:
+            teacher_subjects_classes_report.write_to_csv(result, download_path)
+        breadcrumbs.go_home_page(page)
+
+
 def run_admin_action(page: Page):
     with page.expect_popup() as admin_page_info:
         page.get_by_role("link", name="Адміністрування Адміністрування").click()
@@ -132,16 +146,31 @@ def run_admin_action(page: Page):
     # download_subjects_list(admin_page)
 
     # 5) distribute students between groups in selected subject and class
-    distribute_students_in_subjects_in_class(
-        subjects=["Українська мова"],
-        class_name="5-А",
-        student_distribution_csv_path=pathlib.Path(
-            "data/admin_portal/students-distribution-in-class/5-А-students-distribution.csv"
-        ),
-        page=admin_page,
-        studying_start_date=datetime.date(2026, 9, 1),
-        remove_selection_if_distribution_missing=True,  # If False => basically do nothing if student was not specified in csv file. If True => group selection will be removed
-    )
+    # distribute_students_in_subjects_in_class(
+    #     subjects=[
+    #         "Історія України",
+    #         "Біологія і екологія",
+    #         "Всесвітня історія",
+    #         "Географія",
+    #         "Громадянська освіта",
+    #         "Зарубіжна література",
+    #         "Математика (алгебра і початки аналізу)",
+    #         "Математика (геометрія)",
+    #         "Мистецтво",
+    #         "Українська література",
+    #         "Фізика",
+    #         "Хімія",
+    #     ],
+    #     class_name="10-А",
+    #     student_distribution_csv_path=pathlib.Path(
+    #         "data/admin_portal/students-distribution-in-class/10-А-all-in-one.csv"
+    #     ),
+    #     page=admin_page,
+    #     studying_start_date=datetime.date(2026, 9, 1),
+    #     remove_selection_if_distribution_missing=True,  # If False => basically do nothing if student was not specified in csv file. If True => group selection will be removed
+    # )
+
+    download_teaching_subjects_report(page=admin_page)
 
 
 def close_welcome_modal_if_appeared(page: Page):
@@ -169,9 +198,22 @@ def run_journal_action(page: Page):
 
     # close_welcome_modal_if_appeared(journal_page)
 
-    set_student_marks_to_nearest_last_lesson.set_random_mark_to_nearest_lessons_to_all_students(
-        mark_min=8, mark_max=10, class_name="8-Б", page=journal_page
-    )
+    # set_student_marks_to_nearest_last_lesson.set_random_mark_to_nearest_lessons_to_all_students(
+    #     mark_min=8, mark_max=10, class_name="11-А", page=journal_page
+    # )
+
+    # set_student_marks_to_nearest_last_lesson.set_marks_to_nearest_lessons(
+    #     student_marks=[
+    #         set_student_marks_to_nearest_last_lesson.StudentMark(
+    #             student_surname="Плотніченко", marks=[9], override=False
+    #         ),
+    #         set_student_marks_to_nearest_last_lesson.StudentMark(student_surname="Хоменко", marks=[9], override=False),
+    #         set_student_marks_to_nearest_last_lesson.StudentMark(student_surname="Самарін", marks=[9], override=False),
+    #         set_student_marks_to_nearest_last_lesson.StudentMark(student_surname="Кульбака", marks=[8], override=False),
+    #     ],
+    #     class_name="5-Б",
+    #     page=journal_page,
+    # )
 
 
 def main():
@@ -187,8 +229,8 @@ def main():
         # Later I will add actions setup and choosing from config or smth
         # ---
 
-        # run_admin_action(page)
-        run_journal_action(page)
+        run_admin_action(page)
+        # run_journal_action(page)
 
         context.close()
 
