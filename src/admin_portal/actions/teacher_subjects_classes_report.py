@@ -8,9 +8,10 @@ import pathlib
 from playwright.sync_api import Page
 from pydantic import BaseModel, ConfigDict
 
-from src.admin_portal.actions.shared import home_page, staff_page
+from src.admin_portal.actions.shared import home_page, staff_list_page
 
 logger = logging.getLogger(__name__)
+
 
 class SubjectInfo(BaseModel):
     model_config = ConfigDict(
@@ -35,10 +36,10 @@ def write_to_csv(data: list[SubjectInfo], path: pathlib.Path) -> None:
 
 def get_teaching_report(staff_name: str, page: Page) -> list[SubjectInfo] | None:
     logger.info(f"Processing {staff_name}")
-    
+
     home_page.go_to_staff_list_page(page)
     try:
-        staff_page.go_to_staff_calendar_page(staff_name, page)
+        staff_list_page.go_to_staff_calendar_page(staff_name, page)
     except:
         logger.warning(f"Staff {staff_name} not found. skipping")
         return None
@@ -50,14 +51,14 @@ def get_teaching_report(staff_name: str, page: Page) -> list[SubjectInfo] | None
     for row in subject_rows:
         if not row.is_visible():
             continue
-        
+
         class_name = row.locator("td:nth-child(4)").inner_text()
-        
+
         subject_cell = row.locator("td:nth-child(5)")
-        
+
         if not subject_cell.is_visible():
             continue
-        
+
         subject_name_from_cell = subject_cell.locator("div:nth-child(1)").inner_text()
 
         subject_name = subject_name_from_cell.split("(")[0].strip()

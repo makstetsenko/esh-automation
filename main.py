@@ -1,12 +1,15 @@
 import datetime
 import pathlib
 
-from app_logging import setup_logging
+from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
+from src.app_logging import setup_logging
 from src.admin_portal.actions import (
     distribute_students_in_class,
+    generate_calendar,
     global_students_list,
     global_teachers_list,
     global_subjects_list,
+    remove_calendar,
     teacher_subjects_classes_report,
 )
 from src.admin_portal.actions.individual_student_schedule_setup import lesson_schedule
@@ -115,13 +118,12 @@ def distribute_students_in_subjects_in_class(
 
 
 def download_teaching_subjects_report(page: Page):
-    staff_names = [
-    ]
+    staff_names = []
 
     for s in staff_names:
         download_path = pathlib.Path(f"./output/{s}-teaching-subjects-report.csv")
         result = teacher_subjects_classes_report.get_teaching_report(s, page)
-        
+
         if not result is None:
             teacher_subjects_classes_report.write_to_csv(result, download_path)
         breadcrumbs.go_home_page(page)
@@ -170,7 +172,15 @@ def run_admin_action(page: Page):
     #     remove_selection_if_distribution_missing=True,  # If False => basically do nothing if student was not specified in csv file. If True => group selection will be removed
     # )
 
-    download_teaching_subjects_report(page=admin_page)
+    # download_teaching_subjects_report(page=admin_page)
+
+    generate_calendar.generate_calendar_weeks_for_school_from_first_week_to_today(
+        generate_calendar.CalendarSchoolType.INDIVIDUAL, admin_page
+    )
+    
+    # remove_calendar.remove_calendar_weeks_for_school_from_first_week_to_today(calendar_type=CalendarSchoolType.INDIVIDUAL, page=admin_page)
+    
+    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Криловський Євген", stop_date=datetime.date(2026,9,1), page=admin_page)
 
 
 def close_welcome_modal_if_appeared(page: Page):
