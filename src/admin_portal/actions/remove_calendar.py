@@ -17,7 +17,7 @@ from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
 
 
 def remove_calendar_weeks_for_school_from_first_week_to_today(calendar_type: CalendarSchoolType, page: Page):
-    if calendar_type == CalendarSchoolType.HIGH:
+    if calendar_type == CalendarSchoolType.HIGH_SCHOOL:
         home_page.go_to_high_schedule_page(page)
 
     if calendar_type == CalendarSchoolType.JUNIOR:
