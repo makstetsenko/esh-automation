@@ -4,6 +4,7 @@ import logging
 from playwright.sync_api import Locator, Page, expect
 
 from src.admin_portal.domain.student_distribution import StudentDistribution
+from src.constants import DateFormat
 
 logger = logging.getLogger(__name__)
 
@@ -146,7 +147,7 @@ def submit(start_date: datetime.date, page: Page) -> None:
         element.wait_for_element_state("stable")
 
     start_studying_date_input = submit_modal.get_by_role("textbox", name="ДД.ММ.РР")
-    start_studying_date_input.fill(start_date.strftime("%d.%m.%y"))
+    start_studying_date_input.fill(start_date.strftime(DateFormat.dd_mm_yy))
 
     # click on modal header to close date selector
     submit_modal.get_by_role("heading").click()

@@ -52,3 +52,22 @@ def click_on_remove_week_link(page: Page):
     remove_calendar_confirmation_popup.confirm_week_remove(page)
 
     shared_actions.wait_network_idle(page)
+
+
+
+def go_to_schedule_page(page: Page):
+    link = page.get_by_role("link", name=re.compile(r"Розклад$"))
+    shared_actions.wait_for_visible(link)
+
+    link.click()
+    shared_actions.wait_network_idle(page)
+
+
+def go_to_alarms_schedule_page(page: Page):
+    link = page.get_by_role("link", name="Розклад дзвінків")
+    shared_actions.wait_for_visible(link)
+
+    link.click()
+    shared_actions.wait_network_idle(page)
+
+    

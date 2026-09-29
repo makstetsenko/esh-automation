@@ -1,7 +1,6 @@
 import datetime
 import pathlib
 
-from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
 from src.app_logging import setup_logging
 from src.admin_portal.actions import (
     distribute_students_in_class,
@@ -9,25 +8,20 @@ from src.admin_portal.actions import (
     global_students_list,
     global_teachers_list,
     global_subjects_list,
-    remove_calendar,
+    student_individual_plan_setup,
     teacher_subjects_classes_report,
 )
-from src.admin_portal.actions.individual_student_schedule_setup import lesson_schedule
-from src.admin_portal.actions.shared import breadcrumbs, home_page
+from src.admin_portal.actions.shared import breadcrumbs
 from src.admin_portal.domain import platform_student, platform_teacher, platform_subject
 from src.admin_portal.domain import student_distribution
-from src.admin_portal.domain.individual_student_schedule import get_schedule
-from src.admin_portal.domain.student_distribution import StudentDistribution
 from src.browser import create_browser
 from playwright.sync_api import Page, expect, sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 
-from src.alarms_schedule import AlarmSchedule, high_school_alarms
 
 
 import logging
 
-from src.journal_portal.actions import set_student_marks_to_nearest_last_lesson
 
 SCHOOL_PORTAL_URL = "https://eschool-ua.com/portal"
 
@@ -38,39 +32,17 @@ logger = logging.getLogger(__name__)
 
 def setup_students_individual_schedule(admin_page: Page) -> None:
     students = [
-        # (
-        #     "Криловський Євген Євгенович",
-        #     "./data/admin_portal/individual_student_schedule/krylovskyi.csv",
-        # ),
-        ("Білоус Тимур Вікторович", "./data/admin_portal/individual_student_schedule/bilous.csv"),
-        # ("Кононенко Андрій Максимович", "./data/admin_portal/individual_student_schedule/kononenko.csv"),
-        # ("Береговий Андрій Ярославович", "./data/admin_portal/individual_student_schedule/berehovyi.csv"),
+        ("Surname name middle name", "schedule path.csv"),
     ]
 
-    for student_name, schedule_file in students:
-        # home.go_home_page(admin_page)
-        # student_alarm_schedule.set_alarm_schedule(
-        #     student_name=student_name,
-        #     alarm_schedule=high_school_alarms,
-        #     admin_page=admin_page,
-        # )
-
-        lesson_schedules = get_schedule(schedule_file)
-
-        # home.go_home_page(admin_page)
-        # lesson_schedule.set_up_individual_plan_subjects(
-        #     student_name=student_name,
-        #     lesson_schedules=lesson_schedules,
-        #     admin_page=admin_page,
-        # )
-
-        breadcrumbs.go_home_page(admin_page)
-        lesson_schedule.set_up_lessons_schedule(
+    for student_name, schedule_file in students:        
+        student_individual_plan_setup.setup_complete_individual_plan(
             student_name=student_name,
-            lesson_schedules=lesson_schedules,
-            alarm_schedule=high_school_alarms,
-            admin_page=admin_page,
+            schedule_plan_path=pathlib.Path(schedule_file).resolve(),
+            individual_plan_start_date=datetime.date(2026,9,1),
+            page=admin_page
         )
+        breadcrumbs.go_home_page(admin_page)
 
 
 def download_students_list(admin_page: Page) -> None:

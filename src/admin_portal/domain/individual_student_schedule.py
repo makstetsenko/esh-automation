@@ -1,4 +1,5 @@
 import csv
+import pathlib
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
@@ -18,11 +19,10 @@ class IndividualHomeBasedSubjectSchedule(BaseModel):
     lesson_number: int = Field(alias="LessonNumber")
     week_number: int = Field(alias="WeekNumber")
     hours_per_week: float = Field(alias="HoursPerWeek")
-    start_date: str = Field(alias="StartDate", default="01.09.2026")
 
 
-def get_schedule(csv_path: str) -> list[IndividualHomeBasedSubjectSchedule]:
-    with open(csv_path, "r", encoding="utf-8") as file:
+def read_schedule_from_file(csv_path: pathlib.Path) -> list[IndividualHomeBasedSubjectSchedule]:
+    with open(csv_path.as_posix(), "r", encoding="utf-8-sig") as file:
         reader = csv.DictReader(file)
 
         students = [IndividualHomeBasedSubjectSchedule.model_validate(row) for row in reader]
