@@ -26,6 +26,8 @@ from playwright.sync_api import Page, expect, sync_playwright, TimeoutError as P
 import logging
 
 from src.journal_portal.actions import mark_lessons_as_online
+from src.journal_portal.actions.grading import grade_students, grades_removal
+from src.journal_portal.actions.journal_portal_pages import main_page
 
 SCHOOL_PORTAL_URL = "https://eschool-ua.com/portal"
 
@@ -215,7 +217,25 @@ def run_journal_action(page: Page):
     #     page=journal_page,
     # )
 
-    mark_lessons_as_online.setup_online_for_date(datetime.date(2026, 10, 1), journal_page)
+    # mark_lessons_as_online.setup_online_for_date(datetime.date(2026, 10, 1), journal_page)
+
+    main_page.go_to_journal(journal_page)
+    grade_students.grade_list_of_students(
+        class_name="9-Б",
+        students=[
+            grade_students.StudentGradeInfo(student_name="", marks=[10, None,9,10], override=False),
+        ],
+        date_from=datetime.date(2026, 9, 1),
+        date_to=datetime.date(2026, 9, 15),
+        page=journal_page,
+    )
+    # grades_removal.remove_grade_from_student_batch(
+    #     class_name="9-Б",
+    #     student_name="Гайдай",
+    #     date_from=datetime.date(2026, 9, 1),
+    #     date_to=datetime.date(2026, 9, 15),
+    #     page=journal_page,
+    # )
 
 
 def main():

@@ -5,10 +5,9 @@ from playwright.sync_api import Page
 
 from src.journal_portal.actions.journal_portal_pages import main_page, shared_actions
 from src.constants import DateFormat
-from src.journal_portal.actions.journal_portal_pages.journal_makrs import lesson_planning_modal
+from src.journal_portal.actions.journal_portal_pages.journal_marks import lesson_planning_modal
 from src.journal_portal.actions.journal_portal_pages.schedule import lesson_link, schedule_page
-from src.journal_portal.actions.journal_portal_pages.journal_makrs import journal_marks_page
-
+from src.journal_portal.actions.journal_portal_pages.journal_marks import journal_marks_page
 
 logger = logging.getLogger(__name__)
 
@@ -54,10 +53,10 @@ def setup_online_for_date(date: datetime.date, page: Page):
             shared_actions.wait_network_idle(page)
             shared_actions.wait(page, 1000)
 
-            date_header_btns = journal_marks_page.get_date_header_buttons(date, page)
+            date_header_btns = journal_marks_page.get_date_buttons(date, page)
 
             for date_btn in date_header_btns:
-                date_btn.click()
+                date_btn.button.click()
                 shared_actions.wait_network_idle(page)
                 shared_actions.wait(page, 500)
 
@@ -66,7 +65,7 @@ def setup_online_for_date(date: datetime.date, page: Page):
                 except Exception as e:
                     logger.error(f"Cannot setup online for lesson {lesson_details.key()} because o error {e}")
                     break
-                    
+
                 if not lesson_planning_modal.has_google_meet_button(page):
                     lesson_planning_modal.close_modal(page)
                     continue

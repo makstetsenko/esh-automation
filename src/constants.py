@@ -12,3 +12,4 @@ class DateFormatDashes(StrEnum):
 
 class DateFormatSlashes(StrEnum):
     dd_mm = "%d/%m"
+    dd_mm_yyyy = "%d/%m/%Y"

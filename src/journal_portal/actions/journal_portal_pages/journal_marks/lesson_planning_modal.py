@@ -27,7 +27,7 @@ def close_modal(page: Page):
     for b in page.get_by_label("Закрити").all():
         if not b.is_visible():
             continue
-        
+
         b.click()
         shared_actions.wait_network_idle(page)
         shared_actions.wait(page, 250)

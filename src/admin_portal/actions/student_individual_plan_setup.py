@@ -13,12 +13,22 @@ from src.admin_portal.actions.admin_platform_pages import (
     shared_actions,
 )
 from src.admin_portal.actions.admin_platform_pages.student import student_page
-from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import add_subject_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import (
+    add_subject_page,
+)
 from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar import calendar_page
-from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.alarm_schedule import add_alarm_page, alarms_schedule_page
-from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.schedule import add_lesson_page, schedule_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.alarm_schedule import (
+    add_alarm_page,
+    alarms_schedule_page,
+)
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.schedule import (
+    add_lesson_page,
+    schedule_page,
+)
 from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form import individual_studying_form_page
-from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import subjects_list_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import (
+    subjects_list_page,
+)
 from src.admin_portal.actions.admin_platform_pages.student_alphabetical_list import student_alphabetical_list_page
 from src.admin_portal.domain.individual_student_schedule import (
     IndividualHomeBasedSubjectSchedule,
@@ -103,21 +113,12 @@ def set_up_schedule(
 
     for lesson_schedule in lesson_schedules:
         if lesson_schedule.week_number == 1:
-            schedule_page.try_select_week(
-                schedule_page.WeekName.WEEK_A, page
-            )
+            schedule_page.try_select_week(schedule_page.WeekName.WEEK_A, page)
 
         if lesson_schedule.week_number == 2:
-            schedule_page.try_select_week(
-                schedule_page.WeekName.WEEK_B, page
-            )
+            schedule_page.try_select_week(schedule_page.WeekName.WEEK_B, page)
 
-        if (
-            schedule_page.is_lesson_exists(
-                lesson_schedule.day_of_week, lesson_schedule.subject, page
-            )
-            > 0
-        ):
+        if schedule_page.is_lesson_exists(lesson_schedule.day_of_week, lesson_schedule.subject, page) > 0:
             print(
                 f"Lesson for {lesson_schedule.subject} on {lesson_schedule.day_of_week} already exists for {student_name}. Skipping."
             )
