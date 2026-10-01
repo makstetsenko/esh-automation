@@ -3,11 +3,12 @@ import logging
 
 from playwright.sync_api import Page
 
-from src.admin_portal.actions.shared import shared_actions
+from src.journal_portal.actions.journal_portal_pages import main_page, shared_actions
 from src.constants import DateFormat
-from src.journal_portal.actions.shared import main_page
-from src.journal_portal.actions.shared.journal_makrs import journal_marks_page, lesson_planning_modal
-from src.journal_portal.actions.shared.schedule import lesson_link, schedule_page
+from src.journal_portal.actions.journal_portal_pages.journal_makrs import lesson_planning_modal
+from src.journal_portal.actions.journal_portal_pages.schedule import lesson_link, schedule_page
+from src.journal_portal.actions.journal_portal_pages.journal_makrs import journal_marks_page
+
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ from playwright.sync_api import Page
 from pydantic import BaseModel
 
 
-from src import alarms_schedule
+from src.admin_portal.domain import alarms_schedule
 from src.admin_portal.actions.admin_platform_pages import (
     breadcrumbs,
     home_page,
@@ -24,7 +24,7 @@ from src.admin_portal.domain.individual_student_schedule import (
     IndividualHomeBasedSubjectSchedule,
     read_schedule_from_file,
 )
-from src.alarms_schedule import AlarmSchedule
+from src.admin_portal.domain.alarms_schedule import AlarmSchedule
 
 
 class SubjectSetup(BaseModel):

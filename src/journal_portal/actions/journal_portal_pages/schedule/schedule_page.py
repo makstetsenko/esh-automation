@@ -4,7 +4,7 @@ import re
 
 from playwright.sync_api import Locator, Page
 
-from src.admin_portal.actions.shared import shared_actions
+from src.journal_portal.actions.journal_portal_pages import shared_actions
 from src.constants import DateFormatDashes
 
 logger = logging.getLogger(__name__)
