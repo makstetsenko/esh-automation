@@ -7,7 +7,7 @@ class AlarmSchedule(BaseModel):
     time_to: str
 
 
-high_school_alarms: list[AlarmSchedule] = [
+HIGHT_SCHOOL_ALARM_SCHEDULES: list[AlarmSchedule] = [
     AlarmSchedule(lesson_number=1, time_from="08:30", time_to="09:15"),
     AlarmSchedule(lesson_number=2, time_from="09:25", time_to="10:10"),
     AlarmSchedule(lesson_number=3, time_from="10:20", time_to="11:05"),

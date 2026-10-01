@@ -177,7 +177,7 @@ def setup_complete_individual_plan(
 
     set_up_alarm_schedule(
         student_name=student_name,
-        alarm_schedule=alarms_schedule.high_school_alarms,
+        alarm_schedule=alarms_schedule.HIGHT_SCHOOL_ALARM_SCHEDULES,
         page=page,
     )
     breadcrumbs.go_home_page(page)
@@ -195,6 +195,6 @@ def setup_complete_individual_plan(
     set_up_schedule(
         student_name=student_name,
         lesson_schedules=lesson_schedules,
-        alarm_schedule=alarms_schedule.high_school_alarms,
+        alarm_schedule=alarms_schedule.HIGHT_SCHOOL_ALARM_SCHEDULES,
         page=page,
     )
