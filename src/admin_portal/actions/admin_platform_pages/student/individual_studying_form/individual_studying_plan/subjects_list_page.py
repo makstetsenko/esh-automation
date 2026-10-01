@@ -1,6 +1,6 @@
 from playwright.sync_api import Locator, Page
 
-from src.admin_portal.actions.shared import shared_actions
+from src.admin_portal.actions.admin_platform_pages import shared_actions
 
 
 def is_subject_exists(subject_name: str, page: Page):

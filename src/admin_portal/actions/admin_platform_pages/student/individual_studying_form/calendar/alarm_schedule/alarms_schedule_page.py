@@ -2,7 +2,7 @@ import re
 
 from playwright.sync_api import Page
 
-from src.admin_portal.actions.shared import shared_actions
+from src.admin_portal.actions.admin_platform_pages import shared_actions
 
 
 def is_alarm_lesson_exists(lesson_number: int, page: Page):

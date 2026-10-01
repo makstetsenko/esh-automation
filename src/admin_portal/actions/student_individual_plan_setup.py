@@ -7,19 +7,19 @@ from pydantic import BaseModel
 
 
 from src import alarms_schedule
-from src.admin_portal.actions.shared import (
+from src.admin_portal.actions.admin_platform_pages import (
     breadcrumbs,
     home_page,
     shared_actions,
 )
-from src.admin_portal.actions.shared.student import student_page
-from src.admin_portal.actions.shared.student.individual_studying_form.individual_studying_plan import add_subject_page
-from src.admin_portal.actions.shared.student.individual_studying_form.calendar import calendar_page
-from src.admin_portal.actions.shared.student.individual_studying_form.calendar.alarm_schedule import add_alarm_page, alarms_schedule_page
-from src.admin_portal.actions.shared.student.individual_studying_form.calendar.schedule import add_lesson_page, schedule_page
-from src.admin_portal.actions.shared.student.individual_studying_form import individual_studying_form_page
-from src.admin_portal.actions.shared.student.individual_studying_form.individual_studying_plan import subjects_list_page
-from src.admin_portal.actions.shared.student_alphabetical_list import student_alphabetical_list_page
+from src.admin_portal.actions.admin_platform_pages.student import student_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import add_subject_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar import calendar_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.alarm_schedule import add_alarm_page, alarms_schedule_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.schedule import add_lesson_page, schedule_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form import individual_studying_form_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import subjects_list_page
+from src.admin_portal.actions.admin_platform_pages.student_alphabetical_list import student_alphabetical_list_page
 from src.admin_portal.domain.individual_student_schedule import (
     IndividualHomeBasedSubjectSchedule,
     read_schedule_from_file,

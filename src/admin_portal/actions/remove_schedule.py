@@ -1,15 +1,15 @@
 from playwright.sync_api import Page
 
-from src.admin_portal.actions.shared import (
+from src.admin_portal.actions.admin_platform_pages import (
     home_page,
 )
-from src.admin_portal.actions.shared.student import student_page
-from src.admin_portal.actions.shared.student.individual_studying_form.individual_studying_plan import remove_subject_page
-from src.admin_portal.actions.shared.student.individual_studying_form.calendar import calendar_page
-from src.admin_portal.actions.shared.student.individual_studying_form.calendar.schedule import schedule_page
-from src.admin_portal.actions.shared.student.individual_studying_form import individual_studying_form_page
-from src.admin_portal.actions.shared.student.individual_studying_form.individual_studying_plan import subjects_list_page
-from src.admin_portal.actions.shared.student_alphabetical_list import student_alphabetical_list_page
+from src.admin_portal.actions.admin_platform_pages.student import student_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import remove_subject_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar import calendar_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar.schedule import schedule_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form import individual_studying_form_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.individual_studying_plan import subjects_list_page
+from src.admin_portal.actions.admin_platform_pages.student_alphabetical_list import student_alphabetical_list_page
 
 
 def remove_schedule_for_student(student_name: str, page: Page):

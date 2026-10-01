@@ -2,7 +2,7 @@ from enum import StrEnum
 
 from playwright.sync_api import Page
 
-from src.admin_portal.actions.shared import remove_schedule_confirmation_popup, shared_actions
+from src.admin_portal.actions.admin_platform_pages import remove_schedule_confirmation_popup, shared_actions
 
 
 class WeekName(StrEnum):

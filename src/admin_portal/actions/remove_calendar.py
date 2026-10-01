@@ -3,16 +3,16 @@ from enum import Enum
 
 from playwright.sync_api import Page
 
-from src.admin_portal.actions.shared import (
+from src.admin_portal.actions.admin_platform_pages import (
     home_page,
 )
-from src.admin_portal.actions.shared.school_class import class_page
-from src.admin_portal.actions.shared.school_calendar import school_calendar_page
-from src.admin_portal.actions.shared.school_class.calendar import class_calendar_page
-from src.admin_portal.actions.shared.student import student_page
-from src.admin_portal.actions.shared.student.individual_studying_form.calendar import calendar_page
-from src.admin_portal.actions.shared.student.individual_studying_form import individual_studying_form_page
-from src.admin_portal.actions.shared.student_alphabetical_list import student_alphabetical_list_page
+from src.admin_portal.actions.admin_platform_pages.school_class import class_page
+from src.admin_portal.actions.admin_platform_pages.school_calendar import school_calendar_page
+from src.admin_portal.actions.admin_platform_pages.school_class.calendar import class_calendar_page
+from src.admin_portal.actions.admin_platform_pages.student import student_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form.calendar import calendar_page
+from src.admin_portal.actions.admin_platform_pages.student.individual_studying_form import individual_studying_form_page
+from src.admin_portal.actions.admin_platform_pages.student_alphabetical_list import student_alphabetical_list_page
 from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
 
 

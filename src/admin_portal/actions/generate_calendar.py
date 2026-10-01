@@ -2,8 +2,8 @@ from enum import Enum
 
 from playwright.sync_api import Page
 
-from src.admin_portal.actions.shared import home_page
-from src.admin_portal.actions.shared.school_calendar import school_calendar_page
+from src.admin_portal.actions.admin_platform_pages import home_page
+from src.admin_portal.actions.admin_platform_pages.school_calendar import school_calendar_page
 from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
 
 

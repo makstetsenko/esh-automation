@@ -8,8 +8,8 @@ import pathlib
 from playwright.sync_api import Page
 from pydantic import BaseModel, ConfigDict
 
-from src.admin_portal.actions.shared import home_page
-from src.admin_portal.actions.shared.organization_staff import staff_list_page
+from src.admin_portal.actions.admin_platform_pages import home_page
+from src.admin_portal.actions.admin_platform_pages.organization_staff import staff_list_page
 
 logger = logging.getLogger(__name__)
 
