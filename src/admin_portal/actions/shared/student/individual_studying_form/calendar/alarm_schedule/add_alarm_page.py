@@ -1,4 +1,3 @@
-
 from playwright.sync_api import Page
 
 from src.admin_portal.actions.shared import shared_actions

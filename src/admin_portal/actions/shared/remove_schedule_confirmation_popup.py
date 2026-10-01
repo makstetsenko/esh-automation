@@ -5,7 +5,7 @@ from src.app_settings import get_app_settings
 
 
 def confirm_week_remove(page: Page):
-    popup = page.get_by_role("heading", name="Видалити тиждень?").locator("..").locator("..")
+    popup = page.get_by_text("Видалити розклад?").locator("..").locator("..")
     shared_actions.wait_for_visible(popup, timeout=5000)
 
     pass_input = popup.locator("#masterKey").filter(visible=True)

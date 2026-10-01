@@ -56,6 +56,7 @@ def go_to_individual_schedule_page(page: Page):
     link.click()
     shared_actions.wait_network_idle(page)
 
+
 def go_to_class_page(class_name: str, page: Page):
     link = page.get_by_role("link", name=class_name, exact=True)
     shared_actions.wait_for_visible(link)

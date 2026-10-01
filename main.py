@@ -1,6 +1,7 @@
 import datetime
 import pathlib
 
+from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
 from src.app_logging import setup_logging
 from src.admin_portal.actions import (
     distribute_students_in_class,
@@ -8,6 +9,8 @@ from src.admin_portal.actions import (
     global_students_list,
     global_teachers_list,
     global_subjects_list,
+    remove_calendar,
+    remove_schedule,
     student_individual_plan_setup,
     teacher_subjects_classes_report,
 )
@@ -18,10 +21,9 @@ from src.browser import create_browser
 from playwright.sync_api import Page, expect, sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 
-
-
 import logging
 
+from src.journal_portal.actions import mark_lessons_as_online
 
 SCHOOL_PORTAL_URL = "https://eschool-ua.com/portal"
 
@@ -32,15 +34,15 @@ logger = logging.getLogger(__name__)
 
 def setup_students_individual_schedule(admin_page: Page) -> None:
     students = [
-        ("Surname name middle name", "schedule path.csv"),
+        ("Красавцев", "data/admin_portal/individual_student_schedule/krasavtsev_schedule_2026-2027.csv"),
     ]
 
-    for student_name, schedule_file in students:        
+    for student_name, schedule_file in students:
         student_individual_plan_setup.setup_complete_individual_plan(
             student_name=student_name,
             schedule_plan_path=pathlib.Path(schedule_file).resolve(),
-            individual_plan_start_date=datetime.date(2026,9,1),
-            page=admin_page
+            individual_plan_start_date=datetime.date(2026, 9, 28),
+            page=admin_page,
         )
         breadcrumbs.go_home_page(admin_page)
 
@@ -146,13 +148,27 @@ def run_admin_action(page: Page):
 
     # download_teaching_subjects_report(page=admin_page)
 
+    # remove_calendar.remove_calendar_weeks_for_school_from_first_week_to_today(calendar_type=CalendarSchoolType.HIGH_SCHOOL, page=admin_page)
+
+    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Красавцев", stop_date=datetime.date(2026,9,1), page=admin_page)
+    # breadcrumbs.go_home_page(admin_page)
+    # remove_schedule.remove_schedule_for_student("Красавцев", page=admin_page)
+
+    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Криловський", stop_date=datetime.date(2026,9,1), page=admin_page)
+    # breadcrumbs.go_home_page(admin_page)
+
+    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Береговий", stop_date=datetime.date(2026,9,1), page=admin_page)
+    # breadcrumbs.go_home_page(admin_page)
+
+    # remove_calendar.remove_calendar_weeks_for_class_until_stop_date("7-Б", stop_date=datetime.date(2026,9,1), page=admin_page)
+    # breadcrumbs.go_home_page(admin_page)
+
+    # remove_calendar.remove_calendar_weeks_for_class_until_stop_date("5-А", stop_date=datetime.date(2026,9,1), page=admin_page)
+    # breadcrumbs.go_home_page(admin_page)
+
     generate_calendar.generate_calendar_weeks_for_school_from_first_week_to_today(
         generate_calendar.CalendarSchoolType.INDIVIDUAL, admin_page
     )
-    
-    # remove_calendar.remove_calendar_weeks_for_school_from_first_week_to_today(calendar_type=CalendarSchoolType.INDIVIDUAL, page=admin_page)
-    
-    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Криловський Євген", stop_date=datetime.date(2026,9,1), page=admin_page)
 
 
 def close_welcome_modal_if_appeared(page: Page):
@@ -197,6 +213,8 @@ def run_journal_action(page: Page):
     #     page=journal_page,
     # )
 
+    mark_lessons_as_online.setup_online_for_date(datetime.date(2026, 10, 1), journal_page)
+
 
 def main():
     with sync_playwright() as p:
@@ -211,8 +229,8 @@ def main():
         # Later I will add actions setup and choosing from config or smth
         # ---
 
-        run_admin_action(page)
-        # run_journal_action(page)
+        # run_admin_action(page)
+        run_journal_action(page)
 
         context.close()
 
