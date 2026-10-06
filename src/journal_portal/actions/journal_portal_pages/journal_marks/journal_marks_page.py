@@ -68,7 +68,8 @@ def get_all_date_buttons(page: Page) -> list[DateButton]:
 
 def get_date_buttons(date: datetime.date, page: Page) -> list[DateButton]:
     btns = get_all_date_buttons(page)
-    return [b for b in btns if b.date == date]
+    
+    return [b for b in btns if b.date.date == date]
 
 
 def select_class(class_name: str, page: Page):
