@@ -4,3 +4,4 @@ openpyxl
 pydantic
 black
 python-dotenv
+pyyaml

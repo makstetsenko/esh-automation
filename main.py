@@ -1,178 +1,19 @@
-import datetime
-import pathlib
-
-
-from src.admin_portal.actions.admin_platform_pages import breadcrumbs
-from src.admin_portal.domain.calendar_school_type import CalendarSchoolType
+from src import action_description_factory
+from src.action_description_factory.action_descriptor import TargetPlatform
+from src.app_args import get_app_args
 from src.app_logging import setup_logging
-from src.admin_portal.actions import (
-    distribute_students_in_class,
-    generate_calendar,
-    global_students_list,
-    global_teachers_list,
-    global_subjects_list,
-    remove_calendar,
-    remove_schedule,
-    student_individual_plan_setup,
-    teacher_subjects_classes_report,
-)
 
-from src.admin_portal.domain import platform_student, platform_teacher, platform_subject
-from src.admin_portal.domain import student_distribution
 from src.browser import create_browser
 from playwright.sync_api import Page, expect, sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 
 import logging
 
-from src.journal_portal.actions import mark_lessons_as_online
-from src.journal_portal.actions.grading import grade_students, grades_removal
-from src.journal_portal.actions.journal_portal_pages import main_page
-
 SCHOOL_PORTAL_URL = "https://eschool-ua.com/portal"
 
 setup_logging()
 
 logger = logging.getLogger(__name__)
-
-
-def setup_students_individual_schedule(admin_page: Page) -> None:
-    students = [
-        ("Красавцев", "data/admin_portal/individual_student_schedule/krasavtsev_schedule_2026-2027.csv"),
-    ]
-
-    for student_name, schedule_file in students:
-        student_individual_plan_setup.setup_complete_individual_plan(
-            student_name=student_name,
-            schedule_plan_path=pathlib.Path(schedule_file).resolve(),
-            individual_plan_start_date=datetime.date(2026, 9, 28),
-            page=admin_page,
-        )
-        breadcrumbs.go_home_page(admin_page)
-
-
-def download_students_list(admin_page: Page) -> None:
-    students = global_students_list.get_all_students(admin_page)
-
-    save_path = pathlib.Path("./output/platform_students.csv").resolve()
-
-    platform_student.write_to_csv(students, save_path)
-
-    print(f"Saved students to {save_path.as_posix()}")
-
-
-def download_teachers_list(admin_page: Page) -> None:
-    teachers = global_teachers_list.get_all_teachers(admin_page)
-
-    save_path = pathlib.Path("./output/platform_teachers.csv").resolve()
-
-    platform_teacher.write_to_csv(teachers, save_path)
-
-    print(f"Saved teachers to {save_path.as_posix()}")
-
-
-def download_subjects_list(admin_page: Page) -> None:
-    subjects = global_subjects_list.get_all_subjects(admin_page)
-
-    save_path = pathlib.Path("./output/platform_subjects.csv").resolve()
-
-    platform_subject.write_to_csv(subjects, save_path)
-
-    print(f"Saved subjects to {save_path.as_posix()}")
-
-
-def distribute_students_in_subjects_in_class(
-    subjects: list[str],
-    class_name: str,
-    student_distribution_csv_path: pathlib.Path,
-    page: Page,
-    studying_start_date: datetime.date,
-    remove_selection_if_distribution_missing: bool,
-) -> None:
-    distribution = student_distribution.read_students_from_csv(student_distribution_csv_path)
-    distribute_students_in_class.distribute_students(
-        class_name, subjects, distribution, page, studying_start_date, remove_selection_if_distribution_missing
-    )
-
-
-def download_teaching_subjects_report(page: Page):
-    staff_names = []
-
-    for s in staff_names:
-        download_path = pathlib.Path(f"./output/{s}-teaching-subjects-report.csv")
-        result = teacher_subjects_classes_report.get_teaching_report(s, page)
-
-        if not result is None:
-            teacher_subjects_classes_report.write_to_csv(result, download_path)
-        breadcrumbs.go_home_page(page)
-
-
-def run_admin_action(page: Page):
-    with page.expect_popup() as admin_page_info:
-        page.get_by_role("link", name="Адміністрування Адміністрування").click()
-    admin_page = admin_page_info.value
-    admin_page.wait_for_load_state("networkidle")
-
-    # 1) setup individual schedule for students
-    # setup_students_individual_schedule(admin_page)
-
-    # 2) Download students list from admin
-    # download_students_list(admin_page)
-
-    # 3) Download teachers list from admin
-    # download_teachers_list(admin_page)
-
-    # 4) Download subjects list from admin
-    # download_subjects_list(admin_page)
-
-    # 5) distribute students between groups in selected subject and class
-    # distribute_students_in_subjects_in_class(
-    #     subjects=[
-    #         "Історія України",
-    #         "Біологія і екологія",
-    #         "Всесвітня історія",
-    #         "Географія",
-    #         "Громадянська освіта",
-    #         "Зарубіжна література",
-    #         "Математика (алгебра і початки аналізу)",
-    #         "Математика (геометрія)",
-    #         "Мистецтво",
-    #         "Українська література",
-    #         "Фізика",
-    #         "Хімія",
-    #     ],
-    #     class_name="10-А",
-    #     student_distribution_csv_path=pathlib.Path(
-    #         "data/admin_portal/students-distribution-in-class/10-А-all-in-one.csv"
-    #     ),
-    #     page=admin_page,
-    #     studying_start_date=datetime.date(2026, 9, 1),
-    #     remove_selection_if_distribution_missing=True,  # If False => basically do nothing if student was not specified in csv file. If True => group selection will be removed
-    # )
-
-    # download_teaching_subjects_report(page=admin_page)
-
-    # remove_calendar.remove_calendar_weeks_for_school_from_first_week_to_today(calendar_type=CalendarSchoolType.HIGH_SCHOOL, page=admin_page)
-
-    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Красавцев", stop_date=datetime.date(2026,9,1), page=admin_page)
-    # breadcrumbs.go_home_page(admin_page)
-    # remove_schedule.remove_schedule_for_student("Красавцев", page=admin_page)
-
-    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Криловський", stop_date=datetime.date(2026,9,1), page=admin_page)
-    # breadcrumbs.go_home_page(admin_page)
-
-    # remove_calendar.remove_calendar_weeks_for_individual_student_until_stop_date("Береговий", stop_date=datetime.date(2026,9,1), page=admin_page)
-    # breadcrumbs.go_home_page(admin_page)
-
-    # remove_calendar.remove_calendar_weeks_for_class_until_stop_date("7-Б", stop_date=datetime.date(2026,9,1), page=admin_page)
-    # breadcrumbs.go_home_page(admin_page)
-
-    # remove_calendar.remove_calendar_weeks_for_class_until_stop_date("5-А", stop_date=datetime.date(2026,9,1), page=admin_page)
-    # breadcrumbs.go_home_page(admin_page)
-
-    generate_calendar.generate_calendar_weeks_for_school_from_first_week_to_today(
-        generate_calendar.CalendarSchoolType.INDIVIDUAL, admin_page
-    )
 
 
 def close_welcome_modal_if_appeared(page: Page):
@@ -191,68 +32,44 @@ def close_welcome_modal_if_appeared(page: Page):
     whats_new_modal.get_by_role("button", name="Почати роботу").click()
 
 
-def run_journal_action(page: Page):
+def go_to_journal(page: Page):
     with page.expect_popup() as journal_page_info:
         page.get_by_role("link", name="Е-журнал Е-журнал").click()
 
     journal_page = journal_page_info.value
     journal_page.wait_for_load_state("networkidle")
-
     # close_welcome_modal_if_appeared(journal_page)
+    return journal_page
 
-    # set_student_marks_to_nearest_last_lesson.set_random_mark_to_nearest_lessons_to_all_students(
-    #     mark_min=8, mark_max=10, class_name="11-А", page=journal_page
-    # )
 
-    # set_student_marks_to_nearest_last_lesson.set_marks_to_nearest_lessons(
-    #     student_marks=[
-    #         set_student_marks_to_nearest_last_lesson.StudentMark(
-    #             student_surname="Плотніченко", marks=[9], override=False
-    #         ),
-    #         set_student_marks_to_nearest_last_lesson.StudentMark(student_surname="Хоменко", marks=[9], override=False),
-    #         set_student_marks_to_nearest_last_lesson.StudentMark(student_surname="Самарін", marks=[9], override=False),
-    #         set_student_marks_to_nearest_last_lesson.StudentMark(student_surname="Кульбака", marks=[8], override=False),
-    #     ],
-    #     class_name="5-Б",
-    #     page=journal_page,
-    # )
-
-    # mark_lessons_as_online.setup_online_for_date(datetime.date(2026, 10, 1), journal_page)
-
-    main_page.go_to_journal(journal_page)
-    grade_students.grade_list_of_students(
-        class_name="9-Б",
-        students=[
-            grade_students.StudentGradeInfo(student_name="", marks=[10, None,9,10], override=False),
-        ],
-        date_from=datetime.date(2026, 9, 1),
-        date_to=datetime.date(2026, 9, 15),
-        page=journal_page,
-    )
-    # grades_removal.remove_grade_from_student_batch(
-    #     class_name="9-Б",
-    #     student_name="Гайдай",
-    #     date_from=datetime.date(2026, 9, 1),
-    #     date_to=datetime.date(2026, 9, 15),
-    #     page=journal_page,
-    # )
+def go_to_admin(page: Page):
+    with page.expect_popup() as admin_page_info:
+        page.get_by_role("link", name="Адміністрування Адміністрування").click()
+    admin_page = admin_page_info.value
+    admin_page.wait_for_load_state("networkidle")
+    return admin_page
 
 
 def main():
+
+    app_args = get_app_args()
+
+    action_descriptor = action_description_factory.action_descriptor.read_from_yaml_file(
+        app_args.action_descriptor_path
+    )
+
     with sync_playwright() as p:
         context = create_browser(p)
-
         page = context.pages[0] if context.pages else context.new_page()
-
         page.goto(SCHOOL_PORTAL_URL)
 
-        # ---
-        # Here uncomment required actions.
-        # Later I will add actions setup and choosing from config or smth
-        # ---
+        target_page = (
+            go_to_admin(page) if action_descriptor.target_platform == TargetPlatform.ADMIN else go_to_journal(page)
+        )
 
-        # run_admin_action(page)
-        run_journal_action(page)
+        while not action_descriptor is None:
+            action_description_factory.execute(action_descriptor, target_page)
+            action_descriptor = action_descriptor.next
 
         context.close()
 

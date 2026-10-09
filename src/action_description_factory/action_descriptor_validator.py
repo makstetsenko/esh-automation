@@ -1,0 +1,26 @@
+from src.action_description_factory import action_descriptor
+from src.action_description_factory.action_executor import admin_portal, journal_portal
+
+PARSE_ARGS_MAP = {
+    action_descriptor.ActionName.ADMIN__DISTRIBUTE_STUDENTS_IN_CLASS: admin_portal.distribute_students_in_class_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__REPORTS__GET_ALL_STUDENTS: admin_portal.global_students_list_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__REPORTS__GET_ALL_SUBJECTS: admin_portal.global_subjects_list_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__REPORTS__GET_ALL_TEACHERS: admin_portal.global_teachers_list_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__REPORTS__TEACHING_LOAD: admin_portal.teaching_load_report_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__CALENDAR__GENERATE_CALENDAR_WEEKS_FOR_SCHOOL_FROM_FIRST_WEEK_TO_TODAY: admin_portal.generate_calendar_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__CALENDAR__REMOVE_CALENDAR_WEEKS_FOR_CLASS_UNTIL_STOP_DATE: admin_portal.remove_calendar_weeks_for_class_until_stop_date_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__CALENDAR__REMOVE_CALENDAR_WEEKS_FOR_INDIVIDUAL_STUDENT_UNTIL_STOP_DATE: admin_portal.remove_calendar_weeks_for_individual_student_until_stop_date_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__CALENDAR__REMOVE_CALENDAR_WEEKS_FOR_SCHOOL_FROM_FIRST_WEEK_TO_TODAY: admin_portal.remove_calendar_weeks_for_school_from_first_week_to_today_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__SCHEDULE__REMOVE_SCHEDULE_FOR_STUDENT: admin_portal.remove_schedule_for_student_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__SCHEDULE__REMOVE_SCHEDULE_SUBJECTS_FOR_STUDENT: admin_portal.remove_schedule_subjects_for_student_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__INDIVIDUAL_PLAN__SET_UP_ALARM_SCHEDULE: admin_portal.student_individual_plan_set_up_alarm_schedule_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__INDIVIDUAL_PLAN__SET_UP_SUBJECTS: admin_portal.student_individual_plan_set_up_subjects_executor.parse_args,
+    action_descriptor.ActionName.ADMIN__INDIVIDUAL_PLAN__SET_UP_SCHEDULE: admin_portal.student_individual_plan_set_up_schedule_executor.parse_args,
+    action_descriptor.ActionName.JOURNAL__GRADING__GRADE_STUDENTS: journal_portal.grade_students.parse_args,
+    action_descriptor.ActionName.JOURNAL__GRADING__REMOVE_GRADES_FROM_STUDENTS: journal_portal.grades_removal.parse_args,
+    action_descriptor.ActionName.JOURNAL__SCHEDULE__MARK_LESSONS_AS_ONLINE: journal_portal.mark_lessons_as_online.parse_args,
+}
+
+
+def raise_error_if_invalid_args(action: action_descriptor.ActionName, args: dict | None):
+    PARSE_ARGS_MAP[action](args)
