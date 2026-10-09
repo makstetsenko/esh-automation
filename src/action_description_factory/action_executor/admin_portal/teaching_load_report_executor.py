@@ -79,8 +79,8 @@ def get_teaching_report(staff_name: str, page: Page) -> list[SubjectInfo] | None
 
 
 class Args(BaseModel):
-    output_file_path: str
-    staff_name: str
+    output_dir_path: str
+    staff_names: str
 
 
 def parse_args(args: dict | None):
@@ -92,10 +92,12 @@ def parse_args(args: dict | None):
 
 def execute(args: dict | None, page: Page) -> None:
     argsObj = parse_args(args)
-    report = get_teaching_report(argsObj.staff_name, page)
+    
+    for n in argsObj.staff_names:
+        report = get_teaching_report(n, page)
 
-    if report is None:
-        logger.info(f"No report for staff {argsObj.staff_name}")
-        return
+        if report is None:
+            logger.warning(f"No report for staff {n}")
+            continue
 
-    write_to_csv(report, pathlib.Path(argsObj.output_file_path))
+        write_to_csv(report, pathlib.Path(argsObj.output_dir_path).joinpath(f"{n}.csv"))

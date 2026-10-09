@@ -1,0 +1,4 @@
+name: admin__breadcrumbs_navigate_home
+target_platform: admin # journal
+args: null
+next: null

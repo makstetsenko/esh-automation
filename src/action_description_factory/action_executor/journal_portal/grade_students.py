@@ -1,18 +1,13 @@
 import datetime
 import logging
-import pathlib
 
 from playwright.sync_api import Page
 from pydantic import BaseModel
 
 from src import shared_actions
-from src.admin_portal.admin_platform_pages.student.individual_studying_form.calendar.schedule import (
-    schedule_page,
-)
 from src.constants import DateFormat
 
 from src.journal_portal.journal_portal_pages.journal_marks import journal_marks_page
-from src.journal_portal.journal_portal_pages import main_page
 from src.journal_portal.journal_portal_pages.journal_marks import grading_modal
 
 logger = logging.getLogger(__name__)

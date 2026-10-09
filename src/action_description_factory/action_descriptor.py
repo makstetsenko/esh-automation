@@ -3,9 +3,6 @@ import pathlib
 
 from pydantic import BaseModel
 
-from src.action_description_factory.action_descriptor_validator import raise_error_if_invalid_args
-
-
 class ActionName(StrEnum):
 
     ### ADMIN ACTIONS ###
@@ -67,6 +64,8 @@ def read_from_yaml_file(file_path: pathlib.Path) -> ActionDescriptor:
 
     descriptor = ActionDescriptor.model_validate(data)
 
+    from src.action_description_factory.action_descriptor_validator import raise_error_if_invalid_args
+    
     raise_error_if_invalid_args(descriptor.name, descriptor.args)
 
     return descriptor

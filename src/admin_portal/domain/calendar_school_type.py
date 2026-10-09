@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class CalendarSchoolType(Enum):
-    JUNIOR = 1
-    HIGH_SCHOOL = 2
-    INDIVIDUAL = 3
+class CalendarSchoolType(StrEnum):
+    JUNIOR = "junior_school"
+    HIGH_SCHOOL = "high_school"
+    INDIVIDUAL = "individual"
