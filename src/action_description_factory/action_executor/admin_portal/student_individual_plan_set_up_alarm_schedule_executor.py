@@ -15,7 +15,9 @@ from src.admin_portal.admin_platform_pages.student.individual_studying_form.cale
 )
 from src.admin_portal.admin_platform_pages.student.individual_studying_form import individual_studying_form_page
 from src.admin_portal.admin_platform_pages.student_alphabetical_list import student_alphabetical_list_page
-from src.admin_portal.admin_platform_pages.student.individual_studying_form.calendar.alarm_schedule import add_alarm_page
+from src.admin_portal.admin_platform_pages.student.individual_studying_form.calendar.alarm_schedule import (
+    add_alarm_page,
+)
 from src.admin_portal.domain.alarms_schedule import AlarmSchedule
 
 logger = logging.getLogger(__name__)

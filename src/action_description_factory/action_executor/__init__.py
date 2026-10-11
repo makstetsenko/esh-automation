@@ -28,6 +28,8 @@ EXECUTION_MAP = {
     ActionName.JOURNAL__GRADING__GRADE_STUDENTS: journal_portal.grade_students.execute,
     ActionName.JOURNAL__GRADING__REMOVE_GRADES_FROM_STUDENTS: journal_portal.grades_removal.execute,
     ActionName.JOURNAL__SCHEDULE__MARK_LESSONS_AS_ONLINE: journal_portal.mark_lessons_as_online.execute,
+    ActionName.JOURNAL__STUDYING_PLAN__AUTO_SELECT_LESSONS_EXECUTOR: journal_portal.studying_plan__auto_select_lessons_executor.execute,
+    ActionName.JOURNAL__JOURNAL_MARKS__AUTO_SELECT_HOMEWORKS: journal_portal.journal_marks__auto_select_homeworks_executor.execute,
 }
 
 

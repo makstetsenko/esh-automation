@@ -9,11 +9,11 @@ def wait_network_idle(page: Page):
     page.wait_for_load_state("networkidle")
 
 
-def wait_for_visible_and_stable(locator: Locator):
-    locator.wait_for(state="visible")
+def wait_for_visible_and_stable(locator: Locator, timeout: int = 30_000):
+    locator.wait_for(state="visible", timeout=timeout)
     element = locator.element_handle()
     if element:
-        element.wait_for_element_state("stable")
+        element.wait_for_element_state("stable", timeout=timeout)
 
 
 def wait_for_visible(locator: Locator, timeout=30_000):

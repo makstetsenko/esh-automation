@@ -3,6 +3,7 @@ import pathlib
 
 from pydantic import BaseModel
 
+
 class ActionName(StrEnum):
 
     ### ADMIN ACTIONS ###
@@ -41,6 +42,8 @@ class ActionName(StrEnum):
     JOURNAL__GRADING__GRADE_STUDENTS = "journal__grading__grade_students"
     JOURNAL__GRADING__REMOVE_GRADES_FROM_STUDENTS = "journal__grading__remove_grades_from_students"
     JOURNAL__SCHEDULE__MARK_LESSONS_AS_ONLINE = "journal__schedule__mark_lessons_as_online"
+    JOURNAL__STUDYING_PLAN__AUTO_SELECT_LESSONS_EXECUTOR = "journal__studying_plan__auto_select_lessons_executor"
+    JOURNAL__JOURNAL_MARKS__AUTO_SELECT_HOMEWORKS = "journal__journal_marks__auto_select_homeworks"
     ### END OF JOURNAL ACTIONS ###
 
 
@@ -65,7 +68,7 @@ def read_from_yaml_file(file_path: pathlib.Path) -> ActionDescriptor:
     descriptor = ActionDescriptor.model_validate(data)
 
     from src.action_description_factory.action_descriptor_validator import raise_error_if_invalid_args
-    
+
     raise_error_if_invalid_args(descriptor.name, descriptor.args)
 
     return descriptor

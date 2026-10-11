@@ -23,7 +23,7 @@ class DateButton(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     button: Locator
-    date: JournalDate
+    journal_date: JournalDate
 
 
 class LessonButtonInfo(BaseModel):
@@ -49,13 +49,13 @@ class StudentInfo(BaseModel):
 
 
 def get_all_date_buttons(page: Page) -> list[DateButton]:
-    btns = page.get_by_role("button", name=re.compile(r"^\d{2}\/\d{2}$")).all()
+    btns = page.get_by_role("button", name=re.compile(r"^\d{2}\/\d{2}")).all()
     current_year = datetime.date.today().year
 
     return [
         DateButton(
             button=b,
-            date=JournalDate(
+            journal_date=JournalDate(
                 date=datetime.datetime.strptime(
                     f"{b.inner_text().strip()}/{current_year}", DateFormatSlashes.dd_mm_yyyy
                 ).date(),
@@ -69,7 +69,7 @@ def get_all_date_buttons(page: Page) -> list[DateButton]:
 def get_date_buttons(date: datetime.date, page: Page) -> list[DateButton]:
     btns = get_all_date_buttons(page)
 
-    return [b for b in btns if b.date.date == date]
+    return [b for b in btns if b.journal_date.date == date]
 
 
 def select_class(class_name: str, page: Page):
@@ -110,6 +110,7 @@ def select_month(month_number: int, page: Page):
     btn.click()
 
     month_btn = page.get_by_role("button", name=month_name_map[month_number], exact=True)
+    shared_actions.wait_for_visible_and_stable(month_btn, 1000)
     month_btn.click()
 
     page.wait_for_timeout(timeout=1000)
@@ -135,7 +136,7 @@ def get_students(page: Page) -> list[StudentInfo]:
             lesson_btn = lessons_cells[index].locator("button") if index < len(lessons_cells) else None
 
             if lesson_btn is not None:
-                lessons.append(LessonButtonInfo(date=date_button.date, lesson_button=lesson_btn))
+                lessons.append(LessonButtonInfo(date=date_button.journal_date, lesson_button=lesson_btn))
 
         students.append(
             StudentInfo(
@@ -146,3 +147,15 @@ def get_students(page: Page) -> list[StudentInfo]:
         )
 
     return students
+
+
+
+def get_switch_class_combobox(page: Page) -> Locator:
+    return page.get_by_role("combobox", name="Перемкнути клас")
+
+def get_switch_subject_combobox(page: Page) -> Locator:
+    return page.get_by_role("combobox", name="Перемкнути предмет")
+
+
+def get_available_options_list(page: Page) -> list[Locator]:
+    return page.get_by_role("option").all()

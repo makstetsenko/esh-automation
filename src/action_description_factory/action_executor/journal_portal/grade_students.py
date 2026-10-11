@@ -96,9 +96,9 @@ def grade_student_batch(
         journal_marks_page.select_month(reference_date.month, page)
 
         all_dates = journal_marks_page.get_all_date_buttons(page)
-        available_dates += [d.date for d in all_dates if d.date.date <= max_date and d.date.date >= min_date]
+        available_dates += [d.journal_date for d in all_dates if d.journal_date.date <= max_date and d.journal_date.date >= min_date]
 
-        if min_date.month == all_dates[0].date.date.month:
+        if min_date.month == all_dates[0].journal_date.date.month:
             break
 
         if reference_date.month in [

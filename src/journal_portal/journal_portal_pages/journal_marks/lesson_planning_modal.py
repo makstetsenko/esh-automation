@@ -28,9 +28,25 @@ def close_modal(page: Page):
         if not b.is_visible():
             continue
 
-        b.click()
+        b.press("Escape")
         shared_actions.wait_network_idle(page)
         shared_actions.wait(page, 250)
 
     shared_actions.wait_network_idle(page)
     shared_actions.wait(page, 250)
+
+
+def get_create_homework_button(page: Page):
+    return page.get_by_role("button", name="Створити домашнє завдання")
+
+
+def get_next_lesson_for_homework_combobox(page: Page):
+    return page.get_by_role("combobox", name="Урок, на який задається домашнє завдання")
+
+
+def click_on_save_homework_button(page: Page):
+    btn= page.get_by_role("button", name="Зберегти")
+    btn.click()
+    shared_actions.wait(page, 500)
+    shared_actions.wait_network_idle(page)
+    

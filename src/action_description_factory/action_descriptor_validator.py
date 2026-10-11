@@ -19,8 +19,13 @@ PARSE_ARGS_MAP = {
     ActionName.JOURNAL__GRADING__GRADE_STUDENTS: journal_portal.grade_students.parse_args,
     ActionName.JOURNAL__GRADING__REMOVE_GRADES_FROM_STUDENTS: journal_portal.grades_removal.parse_args,
     ActionName.JOURNAL__SCHEDULE__MARK_LESSONS_AS_ONLINE: journal_portal.mark_lessons_as_online.parse_args,
+    ActionName.JOURNAL__STUDYING_PLAN__AUTO_SELECT_LESSONS_EXECUTOR: journal_portal.studying_plan__auto_select_lessons_executor.parse_args,
+    ActionName.JOURNAL__JOURNAL_MARKS__AUTO_SELECT_HOMEWORKS: journal_portal.journal_marks__auto_select_homeworks_executor.parse_args,
 }
 
 
 def raise_error_if_invalid_args(action: ActionName, args: dict | None):
+    if args is None:
+        return
+
     PARSE_ARGS_MAP[action](args)

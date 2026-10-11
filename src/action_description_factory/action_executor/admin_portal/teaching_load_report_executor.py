@@ -92,7 +92,7 @@ def parse_args(args: dict | None):
 
 def execute(args: dict | None, page: Page) -> None:
     argsObj = parse_args(args)
-    
+
     for n in argsObj.staff_names:
         report = get_teaching_report(n, page)
 
