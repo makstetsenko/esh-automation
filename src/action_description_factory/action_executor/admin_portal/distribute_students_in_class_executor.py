@@ -199,7 +199,8 @@ def distribute_students(
 class Args(BaseModel):
     class_name: str
     subjects: list[str]
-    student_distribution_csv_path: str
+    student_distribution_csv_path: str | None = None
+    student_distribution: dict[str,str] | None = None
     studying_start_date: datetime.date
     remove_selection_if_distribution_missing: bool
 
@@ -213,7 +214,22 @@ def parse_args(args: dict | None):
 
 def execute(args: dict | None, page: Page) -> None:
     argsObj = parse_args(args)
-    distribution = dto.student_distribution.read_students_from_csv(pathlib.Path(argsObj.student_distribution_csv_path))
+    
+    distribution = []
+    
+    if not argsObj.student_distribution_csv_path is None:
+        distribution += dto.student_distribution.read_students_from_csv(pathlib.Path(argsObj.student_distribution_csv_path))
+
+    if not argsObj.student_distribution is None:
+        for n,g in argsObj.student_distribution:
+            distribution.append(StudentDistribution(
+                student_surname = n,
+                group_name=g
+            ))
+            
+    if len(distribution) == 0:
+        logger.info("No distribution found")
+        return
 
     distribute_students(
         class_name=argsObj.class_name,
