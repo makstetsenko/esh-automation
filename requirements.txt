@@ -5,3 +5,5 @@ pydantic
 black
 python-dotenv
 pyyaml
+jupyter
+ipykernel

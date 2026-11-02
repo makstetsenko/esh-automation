@@ -221,7 +221,7 @@ def execute(args: dict | None, page: Page) -> None:
         distribution += dto.student_distribution.read_students_from_csv(pathlib.Path(argsObj.student_distribution_csv_path))
 
     if not argsObj.student_distribution is None:
-        for n,g in argsObj.student_distribution:
+        for n,g in argsObj.student_distribution.items():
             distribution.append(StudentDistribution(
                 student_surname = n,
                 group_name=g
