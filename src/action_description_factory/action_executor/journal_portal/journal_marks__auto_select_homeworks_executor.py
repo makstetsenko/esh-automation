@@ -33,6 +33,8 @@ def proceed_with_class(args: Args, page: Page):
         try:
             journal_marks_page.select_month(month, page)
         except:
+            info_msg = f"Month {month} is not available for selection, skipping"
+            logger.error(info_msg)
             continue
 
         date_btns = journal_marks_page.get_all_date_buttons(page)
@@ -111,6 +113,7 @@ def execute(args: dict | None, page: Page) -> None:
         
         subject_combobox = journal_marks_page.get_switch_subject_combobox(page)
         if subject_combobox.is_visible():
+            
             subject_combobox.click()
             shared_actions.wait(page, 500)
             shared_actions.wait_network_idle(page)

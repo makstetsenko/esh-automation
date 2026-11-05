@@ -106,10 +106,7 @@ def select_month(month_number: int, page: Page):
         12: "Гру",
     }
 
-    btn = page.get_by_role("button", name="Перемкнути період")
-    btn.click()
-
-    month_btn = page.get_by_role("button", name=month_name_map[month_number], exact=True)
+    month_btn = page.get_by_role("tab", name=month_name_map[month_number])
     shared_actions.wait_for_visible_and_stable(month_btn, 1000)
     month_btn.click()
 
