@@ -112,9 +112,13 @@ def execute(args: dict | None, page: Page) -> None:
         shared_actions.wait_network_idle(page)
         
         subject_combobox = journal_marks_page.get_switch_subject_combobox(page)
+        
+        shared_actions.wait(page, 500)
+        shared_actions.wait_network_idle(page)
+
         if subject_combobox.is_visible():
-            
             subject_combobox.click()
+            
             shared_actions.wait(page, 500)
             shared_actions.wait_network_idle(page)
             
